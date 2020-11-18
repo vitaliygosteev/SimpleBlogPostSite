@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_list_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -39,14 +39,14 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
     model = Post
 
 
-class PostDeleteView(DeleteView):
+class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
     success_url = reverse_lazy('post_list')
 
 
 class DraftListView(LoginRequiredMixin, ListView):
-    login = '/login/'
-    redirect_field_name = 'blog/post_list.html'
+    login_url = '/login/'
+    redirect_field_name = 'blog/post_draft_list.html'
     model = Post
 
     def get_queryset(self):
@@ -55,14 +55,14 @@ class DraftListView(LoginRequiredMixin, ListView):
 
 @login_required
 def post_publish(request, pk):
-    post = get_list_or_404(Post, pk=pk)
+    post = get_object_or_404(Post, pk=pk)
     post.publish()
     return redirect('post_detail', pk=pk)
 
 
 @login_required
 def add_comment_to_post(request, pk):
-    post = get_list_or_404(Post, pk=pk)
+    post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -77,14 +77,14 @@ def add_comment_to_post(request, pk):
 
 @login_required
 def comment_approve(request, pk):
-    comment = get_list_or_404(Comment, pk=pk)
+    comment = get_object_or_404(Comment, pk=pk)
     comment.approve()
     return redirect('post_detail', pk=comment.post.pk)
 
 
 @login_required
 def comment_remove(request, pk):
-    comment = get_list_or_404(Comment, pk=pk)
+    comment = get_object_or_404(Comment, pk=pk)
     post_pk = comment.post.pk
     comment.delete()
     return redirect('post_detail', pk=post_pk)
