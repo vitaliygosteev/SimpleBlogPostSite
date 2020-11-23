@@ -2,7 +2,8 @@
 {% block content %}
 
 
-<h1 class="posttitle loader">{{ post.title }}</h1>
+{% comment %} <h1 class="posttitle loader">{{ post.title }}</h1>  {% endcomment %} {% comment %} weird rainbow animation {% endcomment %}
+<h1 class="posttitle">{{ post.title }}</h1>
 
     {% if post.published_date %}
     <div class="date postdate">
